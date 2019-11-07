@@ -1,6 +1,7 @@
 import React from "react";
 import BotCollection from './BotCollection';
 import YourBotArmy from './YourBotArmy';
+import BotSpecs from '../components/BotSpecs';
 
 const API = ' https://bot-battler-api.herokuapp.com/api/v1/bots';
 
@@ -11,7 +12,8 @@ class BotsPage extends React.Component {
 
     this.state = {
       bots: [],
-      army: []
+      army: [],
+      selectedBot: null
     }
   }
 
@@ -26,17 +28,35 @@ class BotsPage extends React.Component {
   }
 
   enlist = (bot) => {
+    let tempBots = [...this.state.bots];
+    tempBots.splice(tempBots.findIndex(tempBot => tempBot.id === bot.id), 1);
+
     this.setState({
-      army: [...this.state.army, bot]
+      bots: tempBots,
+      army: [...this.state.army, bot],
+      selectedBot: null
     })
   }
 
-  discharge = (botId) => {
-    let temp = [...this.state.army];
-    temp.splice(temp.findIndex(bot => bot.id === botId));
+  discharge = (bot) => {
+    let tempArmy = [...this.state.army];
+    tempArmy.splice(tempArmy.findIndex(tempBot => tempBot.id === bot.id), 1);
 
     this.setState({
-      army: temp
+      bots: [...this.state.bots, bot],
+      army: tempArmy
+    })
+  }
+
+  selectBot = (bot) => {
+    this.setState({
+      selectedBot: bot
+    })
+  }
+
+  returnToList = () => {
+    this.setState({
+      selectedBot: null
     })
   }
 
@@ -44,8 +64,10 @@ class BotsPage extends React.Component {
     return (
       <div>
         <YourBotArmy army={this.state.army} discharge={this.discharge} />
-        <h1>Bots to Enlist:</h1>
-        <BotCollection bots={this.state.bots} enlist={this.enlist} />
+        {this.state.selectedBot === null ?
+          <BotCollection bots={this.state.bots} selectBot={this.selectBot} /> :
+          <BotSpecs bot={this.state.selectedBot} enlist={this.enlist} returnToList={this.returnToList} />
+        }
       </div>
     );
   }
