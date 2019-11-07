@@ -5,7 +5,7 @@ class YourBotArmy extends React.Component {
   //your bot army code here...
 
   render(){
-    console.log(this.props)
+    // console.log(this.props)
     const robot = this.props.army.map((oneRobot) => 
     
     
